@@ -3,16 +3,16 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <a href="https://github.com/codefo-O/on_prem_etl_pipeline">
+  <a href="https://github.com/codefo-O/on_prem_streaming_data_pipeline">
     <img src="images/logo.png" alt="Logo" width="300" height="300">
   </a>
 
 <h3 align="center">ETL Pipeline</h3>
 
   <p align="center">
-    A proof of concept project to create an ETL pipeline to ingest data from a CSV/JSON file, transform, saves as parquet and visualize for analysis.
+    A proof of concept project to create an streaming data pipeline to ingest data from a REST API, transform, and store in a database to visualize.
     <br />
-    <a href="https://github.com/codefo-O/on_prem_etl_pipeline">View Youtube Demo </a>
+    <a href="https://github.com/codefo-O/on_prem_streaming_data_pipeline">View Youtube Demo </a>
   </p>
 </div>
 
@@ -45,28 +45,17 @@
 
 <img src="images/diagram.png">
 
-The workflow for the project as per the diagram above and steps below.
-
-Step 1: User generates file and uploads to incoming folder
-
-Step 2: Monitor incoming folder using inotify-tools and trigger Airflow Dag
-
-Step 3: Airflow Dag runs Spark job
-
-Step 4: Spark generates parquet files directly to the filesystem
-
-Step 5: Query filesystem using Drill
-
-Step 6: Visualize data using Superset
-
+The workflow for the above diagram 
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 
 ### Built With
-* [Airflow](https://airflow.apache.org/)
+* [Debezium](https://debezium.io/)
 * [Docker](https://www.docker.com/)
-* [Drill](https://drill.apache.org/)
+* [Kafka](https://kafka.apache.org/)
+* [MySQL](https://www.mysql.com//
+* [NiFi](https://nifi.apache.org/)
 * [Postgres](https://www.postgresql.org/)
 * [Spark](https://spark.apache.org/)
 * [Superset](https://superset.apache.org/)
@@ -77,18 +66,18 @@ Step 6: Visualize data using Superset
 <!-- GETTING STARTED -->
 ## Getting Started
 
-This is an POC ETL pipeline to transform data from a csv/json file and output to parquet files, the data can then visualized for analysis.
+This proof of concept streaming data pipeline will utilize NiFi to get data from a REST API.  The data will then move from a MySQL database to a PostgreSQL utalizing Kafka to produce events.  The cosumer will be setup as a simple Spark job.
 
 ### Prerequisites
 
-This project can be ran on any server able to run Docker containers and inotify-tools available in EPEL.
+This project can be ran on any server able to run Docker containers and access to the internet.
 
 * [Docker](https://www.docker.com/)
-* [inotify-tools](https://docs.fedoraproject.org/en-US/epel/)
+
 
 ### Deployment
 
-To deploy the etl_pipline solution please follow the steps below.
+To deploy the streaming_data_pipeline solution please follow the steps below.
 1. Clone the repo.
    ```sh
    git clone https://github.com/codefo-O/on_prem_etl_pipeline.git
@@ -185,4 +174,4 @@ Distributed under the Apache 2.0 License. See `LICENSE.txt` for more information
 
 Gurjot Singh - GurjotSingh@rogers.com
 
-Project Link: [https://github.com/codefo-O/on-prem_etl_pipeline](https://github.com/codefo-O/on-prem_etl_pipeline)
+Project Link: [https://github.com/codefo-O/on_prem_streaming_data_pipeline](https://github.com/codefo-O/on_prem_streaming_data_pipeline)
