@@ -54,9 +54,10 @@ The workflow for the above diagram
 * [Debezium](https://debezium.io/)
 * [Docker](https://www.docker.com/)
 * [Kafka](https://kafka.apache.org/)
-* [MySQL](https://www.mysql.com//
+* [MySQL](https://www.mysql.com/)
 * [NiFi](https://nifi.apache.org/)
 * [Postgres](https://www.postgresql.org/)
+* [Scala](https://www.scala-lang.org/)
 * [Spark](https://spark.apache.org/)
 * [Superset](https://superset.apache.org/)
 
@@ -80,40 +81,34 @@ This project can be ran on any server able to run Docker containers and access t
 To deploy the streaming_data_pipeline solution please follow the steps below.
 1. Clone the repo.
    ```sh
-   git clone https://github.com/codefo-O/on_prem_etl_pipeline.git
+   git clone https://github.com/codefo-O/on_prem_streaming_data_pipeline
    ```
 2. Change into the work directory.
    ```sh
-   cd on_prem_etl_pipeline
+   cd on_prem_streaming_data_pipeline
    ```
-3. Start the Postgres container.
+3. Start the MySQL container.
    ```sh
-   docker run -dit --name postgres \
-                           -e POSTGRES_USER=airflow \
-                           -e POSTGRES_PASSWORD=airflow \
-                           -e POSTGRES_DB=airflow postgres:latest
+   docker run -dit --name mysql -p 3306:3306 \
+                                -e MYSQL_ROOT_PASSWORD=rootpassword \
+                                -e MYSQL_USER=mysqluser \
+                                -e MYSQL_PASSWORD=userpassword \
+                                debezium/example-mysql:1.6
    ```
-4. Start the Apache Airflow & Apache Spark container.
+4. Create the database and table on MySQL.
    ```sh
-   docker run -dit --name airflow \
-                            -v ${PWD}/dags:/usr/local/airflow/dags \
-                            -v ${PWD}/data:/data -v ${PWD}/jars:/jars \
-                            -v ${PWD}/scripts:/scripts --link postgres:postgres \
-                            -p 8080:8080 codefoo/airflow-spark webserver
+   docker exec -d mysql mysql -u root -prootpassword < templates/mysql_bus_demo.sql
    ```
-5. Add Admin user to Apache Airflow.
+5. Start the Postgres container.
    ```sh
-   docker exec -it airflow airflow users create \
-                                          --role Admin \
-                                          --username admin \
-                                          --email admin \
-                                          --firstname admin \
-                                          --lastname admin \
-                                          --password admin
+   docker run -dit --name postgres -p 5432:5432 \
+                                   -v ${PWD}/scripts:/scripts \
+                                   -e POSTGRES_PASSWORD=GiVeUp \
+                                   postgres
    ```
-6. Update Apache Airflow database.
+6. Create the database and table on Postgres
    ```sh
-   docker exec -it airflow airflow db upgrade
+   docker exec -d postgres psql -U postgres -f /templates/postgres_bus_demo.sql
    ```
 7. Start Apache Airflow scheduler for the first time.
    ```sh
