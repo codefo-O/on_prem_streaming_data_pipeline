@@ -12,7 +12,7 @@
   <p align="center">
     A proof of concept streaming data pipeline that will utilize NiFi to get data from a REST API.  The data will then move from a MySQL database to a PostgreSQL utalizing Kafka to produce events.  The cosumer will be setup as a simple Spark job.
     <br />
-    <a href="https://github.com/codefo-O/on_prem_streaming_data_pipeline">View Youtube Demo </a>
+    <a href="https://github.com/codefo-O/on_prem_streaming_data_pipeline">View Demo Video </a>
   </p>
 </div>
 
@@ -108,11 +108,11 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
    ```sh
    docker run -dit --name nifi -p 8080:8080 -p 8443:8443 --link mysql:mysql  codefoo/nifi-custom
    ```
-8. Import/Configure the NiFi template can be done through the UI (See Video Demo) or by running the script.      
+8. Import/Configure the NiFi template can be done through the UI (See Demo Video) or by running the script.      
    ```sh
    ./scripts/nifi_upload_template.sh
    ```
-9. Start Debezium/Xookeeper Debezium/Kafka & Debezium/connect containers.
+9. Start Debezium/Zookeeper Debezium/Kafka & Debezium/Connect containers.
    ```sh
    docker run -dit --name zookeeper -p 2181:2181 -p 2888:2888 -p 3888:3888 debezium/zookeeper:1.6
    docker run -dit --name kafka -p 9092:9092 --link zookeeper:zookeeper debezium/kafka:1.6
@@ -126,36 +126,49 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
                                   --link mysql:mysql \
                                   debezium/connect:1.6
    ```
-10. Add Admin user to Apache Superset. 
+10. Confirm Debezium Connect is running and enable MySql connector.
     ```sh
-    docker exec -it superset superset fab create-admin \
-                                           --username admin \
-                                           --firstname Superset \
-                                           --lastname Admin \
-                                           --email admin@superset.com \
-                                           --password admin
+    curl -H "Accept:application/json" localhost:8083/
+    curl -i -X POST -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/ \
+                                                 -d '{ "name": "inventory-connector", "config": { "connector.class": "io.debezium.connector.mysql.MySqlConnector", "tasks.max": "1", "database.hostname": "mysql", "database.port": "3306", "database.user": "root", "database.password": "rootpassword", "database.server.id": "184054", "database.server.name": "dbserver1", "database.include.list": "demo", "database.history.kafka.bootstrap.servers": "kafka:9092", "database.history.kafka.topic": "dbhistory.demo" } }'
+    curl -H "Accept:application/json" localhost:8083/connectors/inventory-connector/status
     ```
-11. Update Apache Superset database.
+11. Start Spark master container.
    ```sh
-   docker exec -it superset superset init
+   docker run -dit --name spark-master -p 8555:8080 -p 7077:7077 \
+                                       -v ${PWD}/jars:/jars \
+                                       -e INIT_DEAMON_STEP=setup_spark \
+                                       --link kafka:kafka \
+                                       --link postgres:postgres \
+                                       bde2020/spark-master:3.2.0-hadoop3.2
    ```
-12. Start monitor for files in /data/incoming.
+12. Start Spark worker container.
    ```sh
-   cd data
-   ./monitor_incoming.sh
+   docker run -dit --name spark-worker -p 8081:8081 \
+                                       -v ${PWD}/jars:/jars \
+                                       -e SPARK_MASTER=spark://spark-master:7077 \
+                                       --link kafka:kafka \
+                                       --link postgres:postgres \
+                                       bde2020/spark-master:3.2.0-hadoop3.2
+   ```
+13. Start the Superset container.
+   ```sh
+   docker run -dit --name superset -p 8088:8088 --link postgres:postgres apache/superset
    ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-
 <!-- USAGE EXAMPLES -->
 ## Usage
 
-Once you have completed all the steps above and started monitor incoming you can test by copying one of the test files in the data folder.
+Once you have completed all the steps above you are ready to start the pipeline with the 2 steps below.
+
+1. Start the NiFi Processors.
+2. Start the Spark job.
  ```sh
-   cp *_Records.csv incoming/ 
+   docker exec -it spark-master.spark/bin/spark-submit --master local --name wcd-streaming-app --class weclouddata.streaming.StreamingJob /jars/streaming/spark-streaming/target/scala-2.12/wcd-spark-streaming-with-debezium_2.12.8-0.1.jar
  ```
-The procssed files will be moved to /data/processed and failed will be moved to /data/failed
+3. Data can now be visualized in Super Set
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -174,3 +187,5 @@ Distributed under the Apache 2.0 License. See `LICENSE.txt` for more information
 Gurjot Singh - GurjotSingh@rogers.com
 
 Project Link: [https://github.com/codefo-O/on_prem_streaming_data_pipeline](https://github.com/codefo-O/on_prem_streaming_data_pipeline)
+
+View Demo Video: [https://github.com/codefo-O/on_prem_streaming_data_pipeline](https://github.com/codefo-O/on_prem_streaming_data_pipeline)
