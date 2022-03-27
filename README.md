@@ -7,10 +7,10 @@
     <img src="images/logo.png" alt="Logo" width="300" height="300">
   </a>
 
-<h3 align="center">ETL Pipeline</h3>
+<h3 align="center">Streaming Data Pipeline</h3>
 
   <p align="center">
-    A proof of concept project to create an streaming data pipeline to ingest data from a REST API, transform, and store in a database to visualize.
+    A proof of concept streaming data pipeline that will utilize NiFi to get data from a REST API.  The data will then move from a MySQL database to a PostgreSQL utalizing Kafka to produce events.  The cosumer will be setup as a simple Spark job.
     <br />
     <a href="https://github.com/codefo-O/on_prem_streaming_data_pipeline">View Youtube Demo </a>
   </p>
@@ -39,7 +39,6 @@
     </ol>
 </details>
 
-
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
@@ -49,8 +48,8 @@ The workflow for the above diagram
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-
 ### Built With
+* [Bash](https://www.gnu.org/software/bash/)
 * [Debezium](https://debezium.io/)
 * [Docker](https://www.docker.com/)
 * [Kafka](https://kafka.apache.org/)
@@ -63,18 +62,13 @@ The workflow for the above diagram
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
-
 <!-- GETTING STARTED -->
 ## Getting Started
-
-This proof of concept streaming data pipeline will utilize NiFi to get data from a REST API.  The data will then move from a MySQL database to a PostgreSQL utalizing Kafka to produce events.  The cosumer will be setup as a simple Spark job.
-
 ### Prerequisites
 
-This project can be ran on any server able to run Docker containers and access to the internet.
+This project can be ran on any server able to run Docker containersd.
 
 * [Docker](https://www.docker.com/)
-
 
 ### Deployment
 
@@ -103,24 +97,34 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
    ```sh
    docker run -dit --name postgres -p 5432:5432 \
                                    -v ${PWD}/scripts:/scripts \
-                                   -e POSTGRES_PASSWORD=GiVeUp \
+                                   -e POSTGRES_PASSWORD=password \
                                    postgres
    ```
 6. Create the database and table on Postgres
    ```sh
    docker exec -d postgres psql -U postgres -f /templates/postgres_bus_demo.sql
    ```
-7. Start Apache Airflow scheduler for the first time.
+7. Start the NiFi container.
    ```sh
-   docker exec -dit airflow airflow scheduler
+   docker run -dit --name nifi -p 8080:8080 -p 8443:8443 --link mysql:mysql  codefoo/nifi-custom
    ```
-8. Start the Apache Drill container.
+8. Import/Configure the NiFi template can be done through the UI (See Video Demo) or by running the script.      
    ```sh
-   docker run -dit --name drill -v ${PWD}/data:/data -p 8047:8047 apache/drill:latest
+   ./scripts/nifi_upload_template.sh
    ```
-9. Start the Apache Superset container.
+9. Start Debezium/Xookeeper Debezium/Kafka & Debezium/connect containers.
    ```sh
-   docker run -dit --name superset -p 8088:8088 codefoo/superset-sqlalchemy:latest
+   docker run -dit --name zookeeper -p 2181:2181 -p 2888:2888 -p 3888:3888 debezium/zookeeper:1.6
+   docker run -dit --name kafka -p 9092:9092 --link zookeeper:zookeeper debezium/kafka:1.6
+   docker run -dit --name connect -p 8083:8083 \
+                                  -e GROUP_ID=1 \
+                                  -e CONFIG_STORAGE_TOPIC=my-connect-configs \
+                                  -e OFFSET_STORAGE_TOPIC=my-connect-offsets \
+                                  -e STATUS_STORAGE_TOPIC=my_connect_statuses 
+                                  --link zookeeper:zookeeper 
+                                  --link kafka:kafka \
+                                  --link mysql:mysql \
+                                  debezium/connect:1.6
    ```
 10. Add Admin user to Apache Superset. 
     ```sh
