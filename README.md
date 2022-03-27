@@ -44,7 +44,12 @@
 
 <img src="images/diagram.png">
 
-The workflow for the above diagram 
+The workflow for the above diagram.
+
+Step 1. NiFi will ingest data from the source Rest and write to MySQL.
+Step 2. Debizeum Connect will allow Kafka to connect to MySQL to produce events.
+Step 3. Spark will connect to Kafka to comsume events and write to Postgres
+Step 4. User can access data from events real time
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
