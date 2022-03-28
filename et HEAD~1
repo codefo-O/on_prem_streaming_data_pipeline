@@ -1,0 +1,110 @@
+[33mcommit 0eeaf779f40ada6bdabcfd97baf61fc9bb8b8f2e[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m
+Author: codefo-O <gurjotsingh@rogers.com>
+Date:   Sun Mar 27 23:44:23 2022 -0400
+
+    Something terribly misguided
+    
+     Changes to be committed:
+            deleted:    jars/spark-streaming-with-debezium_2.12.8-0.1.jar
+
+[33mcommit 825e4dc886d61b2df1e34b6f2739e4e0f95cf89b[m
+Author: codefo-O <gurjotsingh@rogers.com>
+Date:   Sun Mar 27 23:33:33 2022 -0400
+
+     Changes to be committed:
+            modified:   .gitignore
+    
+     Changes to be committed:
+            modified:   .gitignore
+            deleted:    jars/spark-streaming-with-debezium_2.12.8-0.1.jar
+
+[33mcommit 2ffef3229789cdce0a18d17a2b76128ed76c1373[m
+Author: codefo-O <gurjotsingh@rogers.com>
+Date:   Sun Mar 27 23:27:30 2022 -0400
+
+     Changes to be committed:
+            modified:   README.md
+            new file:   jars/bus_status.json
+            new file:   jars/spark-streaming-with-debezium_2.12.8-0.1.jar
+            modified:   spark-streaming/src/main/scala/streaming/StreamingJob.scala
+            modified:   templates/nifi_bus_demo.xml
+
+[33mcommit 9844bcb53c859862951a9384194e451bfac275e4[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: codefo-O <gurjotsingh@rogers.com>
+Date:   Sun Mar 27 18:26:23 2022 -0400
+
+     Changes to be committed:
+            new file:   .gitignore
+            modified:   README.md
+            new file:   spark-streaming/.DS_Store
+            new file:   spark-streaming/build.sbt
+            new file:   spark-streaming/project/build.properties
+            new file:   spark-streaming/project/plugins.sbt
+            new file:   spark-streaming/src/main/scala/streaming/StreamingJob.scala
+            new file:   spark-streaming/src/main/scala/wrapper/SparkSessionWrapper.scala
+
+[33mcommit 69153b94a5c406493f37eb7c17e8276a00b845fd[m
+Author: codefo-O <gurjotsingh@rogers.com>
+Date:   Sun Mar 27 15:45:10 2022 -0400
+
+     Changes to be committed:
+            modified:   README.md
+            modified:   scripts/nifi_upload_template.sh
+
+[33mcommit 0916a8e6ffbb86aa6fd5169d86c41fbcc9157d6d[m
+Author: codefo-O <gurjotsingh@rogers.com>
+Date:   Sun Mar 27 00:59:47 2022 -0400
+
+     Changes to be committed:
+            modified:   README.md
+            modified:   scripts/nifi_upload_template.sh
+
+[33mcommit 91ad351aee8bc3bc0183a4787558313fed4d3136[m
+Author: codefo-O <gurjotsingh@rogers.com>
+Date:   Sat Mar 26 23:35:55 2022 -0400
+
+     Changes to be committed:
+            modified:   README.md
+    new file:   scripts/nifi_upload_template.sh
+
+[33mcommit bb9823c3f88ad730b0ea1c850ae16c433477bd86[m
+Author: codefo-O <gurjotsingh@rogers.com>
+Date:   Sat Mar 26 17:49:44 2022 -0400
+
+     Changes to be committed:
+            modified:   README.md
+            new file:   templates/nifi_bus_demo.xml
+
+[33mcommit a537b340dd1aa79740943d5c48498106396c0562[m
+Author: codefo-O <gurjotsingh@rogers.com>
+Date:   Sat Mar 26 02:05:22 2022 -0400
+
+     Changes to be committed:
+            renamed:    images/Diagram.png -> images/diagram.png
+
+[33mcommit 476128ea9461924659c481d64456b60764ec8831[m
+Author: codefo-O <gurjotsingh@rogers.com>
+Date:   Sat Mar 26 02:04:19 2022 -0400
+
+     Changes to be committed:
+            renamed:    Images/Diagram.png -> images/Diagram.png
+            renamed:    Images/logo.png -> images/logo.png
+            renamed:    Templates/mysql_bus_demo.sql -> templates/mysql_bus_demo.sql
+            renamed:    Templates/postgres_bus_demo.sql -> templates/postgres_bus_demo.sql
+
+[33mcommit df6528d410320fd31de43e953a3d3147bbff0442[m
+Author: codefo-O <gurjotsingh@rogers.com>
+Date:   Sat Mar 26 02:02:04 2022 -0400
+
+     Changes to be committed:
+            new file:   Images/Diagram.png
+            new file:   Images/logo.png
+            modified:   README.md
+            new file:   Templates/mysql_bus_demo.sql
+            new file:   Templates/postgres_bus_demo.sql
+
+[33mcommit 62ce41f1438f5f25e91af47778c81504a097cd72[m
+Author: Gurjot Singh <93689909+codefo-O@users.noreply.github.com>
+Date:   Thu Mar 24 03:38:17 2022 -0400
+
+    Initial commit

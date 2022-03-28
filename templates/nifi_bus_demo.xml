@@ -253,7 +253,7 @@
             <properties>
                 <entry>
                     <key>Database Connection URL</key>
-                    <value>jdbc:mysql://mysql:3306/demo</value>
+                    <value>jdbc:mysql://mysql:3306/bus_demo</value>
                 </entry>
                 <entry>
                     <key>Database Driver Class Name</key>

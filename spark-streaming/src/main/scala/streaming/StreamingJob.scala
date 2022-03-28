@@ -17,25 +17,25 @@ import org.apache.log4j.Logger
 import org.apache.log4j.Level
 
 
-case class JDBCConfig(url: String, user: String = "postgres", password: String = "GiVeUp", tablename: String = "bus_status")
+case class JDBCConfig(url: String, user: String = "postgres", password: String = "password", tablename: String = "bus_status")
 
 case class KafkaReaderConfig(kafkaBootstrapServers: String, topics: String, startingOffsets: String = "latest")
 
 case class StreamingJobConfig(checkpointLocation: String, kafkaReaderConfig: KafkaReaderConfig)
 
-object StreamingJob extends App with SparkSessionWrapper {
+object StreamingJDBC extends App with SparkSessionWrapper {
  
   val currentDirectory = new java.io.File(".").getCanonicalPath
   val schema = spark.read.json("file:///jars/bus_status.json").schema
-  val kafkaReaderConfig = KafkaReaderConfig("kafka:9092", "dbserver1.demo.bus_status")
-  val jdbcConfig = JDBCConfig(url = "jdbc:postgresql://postgres:5432/bus_dem")
-  val streamingType = "Job"
+  val kafkaReaderConfig = KafkaReaderConfig("kafka:9092", "dbserver1.bus_demo.bus_status")
+  val jdbcConfig = JDBCConfig(url = "jdbc:postgresql://postgres:5432/bus_demo")
+  val streamingType = "JDBC"
   new StreamingJobExecutor(spark, kafkaReaderConfig, currentDirectory + "/checkpoint/job/", jdbcConfig, schema, streamingType).execute()
 }
 object StreamingConsole extends App with SparkSessionWrapper {
   val currentDirectory = new java.io.File(".").getCanonicalPath
   val schema = spark.read.json("file:///jars/bus_status.json").schema
-  val kafkaReaderConfig = KafkaReaderConfig("kafka:9092", "dbserver1.demo.bus_status")
+  val kafkaReaderConfig = KafkaReaderConfig("kafka:9092", "dbserver1.bus_demo.bus_status")
   val jdbcConfig = JDBCConfig(url = "")
   val streamingType = "Console"
   new StreamingJobExecutor(spark, kafkaReaderConfig, currentDirectory + "/checkpoint/job/", jdbcConfig, schema, streamingType).execute()
@@ -43,9 +43,9 @@ object StreamingConsole extends App with SparkSessionWrapper {
 object Streaminghudi extends App with SparkSessionWrapper {
   val currentDirectory = new java.io.File(".").getCanonicalPath
   val schema = spark.read.json("file:///jars/bus_status.json").schema
-  val kafkaReaderConfig = KafkaReaderConfig("kafka:9092", "dbserver1.demo.bus_status")
+  val kafkaReaderConfig = KafkaReaderConfig("kafka:9092", "dbserver1.bus_demo.bus_status")
   val jdbcConfig = JDBCConfig(url = "")
-  val streamingType = "Console"
+  val streamingType = "Hudi"
   new StreamingJobExecutor(spark, kafkaReaderConfig, currentDirectory + "/checkpoint/job/", jdbcConfig, schema, streamingType).execute()
 }
 
@@ -63,7 +63,7 @@ class StreamingJobExecutor(spark: SparkSession, kafkaReaderConfig: KafkaReaderCo
                             .drop("leadingVehicleId")
 
 
-    if( streamingType == "Job" ){
+    if( streamingType == "JDBC" ){
       transformDF.writeStream
                  .option("checkpointLocation", "/checkpoint/job/")
                  .foreachBatch { (batchDF: DataFrame, _: Long) => {
@@ -103,7 +103,7 @@ class StreamingJobExecutor(spark: SparkSession, kafkaReaderConfig: KafkaReaderCo
                         .option("hoodie.upsert.shuffle.parallelism", "100")
                         .option("hoodie.insert.shuffle.parallelism", "100")
                         .mode(SaveMode.Append)
-                        .save("/hudi/")
+                        .save("/data/")
                       }
                   }.option("checkpointLocation", "/tmp/sparkHudi/checkpoint/")
                   .start()

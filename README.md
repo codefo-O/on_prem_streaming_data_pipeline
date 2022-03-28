@@ -89,25 +89,25 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
 3. Start the MySQL container.
    ```sh
    docker run -dit --name mysql -p 3306:3306 \
-                                -e MYSQL_ROOT_PASSWORD=rootpassword \
+                                -e MYSQL_ROOT_PASSWORD=password \
                                 -e MYSQL_USER=mysqluser \
-                                -e MYSQL_PASSWORD=userpassword \
+                                -e MYSQL_PASSWORD=password \
                                 debezium/example-mysql:1.6
    ```
 4. Create the database and table on MySQL.
    ```sh
-   docker exec -d mysql mysql -u root -prootpassword < templates/mysql_bus_demo.sql
+   docker exec -i mysql mysql -u root -ppassword < templates/mysql_bus_demo.sql
    ```
 5. Start the Postgres container.
    ```sh
    docker run -dit --name postgres -p 5432:5432 \
-                                   -v ${PWD}/scripts:/scripts \
+                                   -v ${PWD}/templates:/templates \
                                    -e POSTGRES_PASSWORD=password \
                                    postgres
    ```
 6. Create the database and table on Postgres
    ```sh
-   docker exec -d postgres psql -U postgres -f /templates/postgres_bus_demo.sql
+   docker exec -i postgres psql -U postgres -f /templates/postgres_bus_demo.sql
    ```
 7. Start the NiFi container.
    ```sh
@@ -125,8 +125,8 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
                                   -e GROUP_ID=1 \
                                   -e CONFIG_STORAGE_TOPIC=my-connect-configs \
                                   -e OFFSET_STORAGE_TOPIC=my-connect-offsets \
-                                  -e STATUS_STORAGE_TOPIC=my_connect_statuses 
-                                  --link zookeeper:zookeeper 
+                                  -e STATUS_STORAGE_TOPIC=my_connect_statuses \
+                                  --link zookeeper:zookeeper \
                                   --link kafka:kafka \
                                   --link mysql:mysql \
                                   debezium/connect:1.6
@@ -134,14 +134,14 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
 10. Confirm Debezium Connect is running and enable MySql connector.
     ```sh
     curl -H "Accept:application/json" localhost:8083/
-    curl -i -X POST -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/ \
-                                                 -d '{ "name": "inventory-connector", "config": { "connector.class": "io.debezium.connector.mysql.MySqlConnector", "tasks.max": "1", "database.hostname": "mysql", "database.port": "3306", "database.user": "root", "database.password": "rootpassword", "database.server.id": "184054", "database.server.name": "dbserver1", "database.include.list": "demo", "database.history.kafka.bootstrap.servers": "kafka:9092", "database.history.kafka.topic": "dbhistory.demo" } }'
+    curl -X POST -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/ -d '{ "name": "inventory-connector", "config": { "connector.class": "io.debezium.connector.mysql.MySqlConnector", "tasks.max": "1", "database.hostname": "mysql", "database.port": "3306", "database.user": "root", "database.password": "password", "database.server.id": "184054", "database.server.name": "dbserver1", "database.include.list": "bus_demo", "database.history.kafka.bootstrap.servers": "kafka:9092", "database.history.kafka.topic": "dbhistory.bus_demo" } }'
     curl -H "Accept:application/json" localhost:8083/connectors/inventory-connector/status
     ```
 11. Start Spark master container.
    ```sh
    docker run -dit --name spark-master -p 8555:8080 -p 7077:7077 \
                                        -v ${PWD}/jars:/jars \
+                                       -v ${PWD}/data:/data \
                                        -e INIT_DEAMON_STEP=setup_spark \
                                        --link kafka:kafka \
                                        --link postgres:postgres \
@@ -151,6 +151,7 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
    ```sh
    docker run -dit --name spark-worker -p 8081:8081 \
                                        -v ${PWD}/jars:/jars \
+                                       -v ${PWD}/data:/data \
                                        -e SPARK_MASTER=spark://spark-master:7077 \
                                        --link kafka:kafka \
                                        --link postgres:postgres \
@@ -171,7 +172,7 @@ Once you have completed all the steps above you are ready to start the pipeline 
 1. Start the NiFi Processors.
 2. Start the Spark job.
  ```sh
-   docker exec -it spark-master.spark/bin/spark-submit --master local --name wcd-streaming-app --class weclouddata.streaming.StreamingJob /jars/streaming/spark-streaming/target/scala-2.12/wcd-spark-streaming-with-debezium_2.12.8-0.1.jar
+   docker exec -it spark-master ./spark/bin/spark-submit --master local --name streaming-data-app --class project.streaming.StreamingJDBC /jars/spark-streaming-with-debezium_2.12.8-0.1.jar
  ```
 3. Data can now be visualized in Super Set
 
