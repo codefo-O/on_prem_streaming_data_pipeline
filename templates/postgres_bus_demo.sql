@@ -5,7 +5,7 @@ create table bus_status (
    id INT NOT NULL,
    routeId INT NOT NULL,
    directionId VARCHAR(40),
-   predictable BOOLEAN,
+   predictable INT,
    secsSinceReport INT NOT NULL,
    kph INT NOT NULL,
    heading INT,
