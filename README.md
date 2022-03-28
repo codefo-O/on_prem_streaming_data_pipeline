@@ -47,8 +47,11 @@
 The workflow for the above diagram.
 
 Step 1. NiFi will ingest data from the source Rest and write to MySQL.
+
 Step 2. Debizeum Connect will allow Kafka to connect to MySQL to produce events.
+
 Step 3. Spark will connect to Kafka to comsume events and write to Postgres
+
 Step 4. User can access data from events real time
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -161,6 +164,10 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
    ```sh
    docker run -dit --name superset -p 8088:8088 --link postgres:postgres apache/superset
    ```
+14. Start SBT container. 
+   ```sh
+   docker run -dit --name sbt -p 8080 -v ${PWD}/spark-streaming:/root hseeberger/scala-sbt:8u222_1.3.
+   ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -169,7 +176,20 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
 
 Once you have completed all the steps above you are ready to start the pipeline with the 2 steps below.
 
+
 1. Start the NiFi Processors.
+2. Clean the build enviornment.
+ ```sh
+   docker exec -it sbt sbt clean
+   ```
+3. Build the application
+ ```sh
+   docker exec -it sbt sbt assembly
+   ```
+4. Copy to jar folder.
+ ```sh
+   cp spark-streaming/target/scala-2.12/spark-streaming-with-debezium_2.12.8-0.1.jar jars/
+   ```
 2. Start the Spark job.
  ```sh
    docker exec -it spark-master ./spark/bin/spark-submit --master local --name streaming-data-app --class project.streaming.StreamingJDBC /jars/spark-streaming-with-debezium_2.12.8-0.1.jar

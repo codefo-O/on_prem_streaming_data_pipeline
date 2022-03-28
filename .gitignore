@@ -1,2 +1,6 @@
 target
+.bash_history
+.cache
+.ivy2
+.sbt
 spark-streaming-with-debezium_2.12.8-0.1.jar
