@@ -172,7 +172,24 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
     ```sh
     docker run -dit --name superset -p 8088:8088 --link postgres:postgres apache/superset
     ```
-14. Start SBT container. 
+14. Add Admin user to  Superset. 
+    ```sh
+    docker exec -it superset superset fab create-admin \
+                                           --username admin \
+                                           --firstname Superset \
+                                           --lastname Admin \
+                                           --email admin@superset.com \
+                                           --password admin
+    ```
+15. Update Superset database.
+    ```sh
+    docker exec -it superset superset db upgrade
+    ```
+16. Initalize Superset.
+    ```sh
+    docker exec -it superset superset init
+    ```
+17. Start SBT container. 
     ```sh
     docker run -dit --name sbt -p 8080 -v ${PWD}/spark-streaming:/root hseeberger/scala-sbt:8u222_1.3.5_2.13.1
     ```
