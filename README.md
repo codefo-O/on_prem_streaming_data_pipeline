@@ -123,7 +123,11 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
 9. Start Debezium/Zookeeper Debezium/Kafka & Debezium/Connect containers.
    ```sh
    docker run -dit --name zookeeper -p 2181:2181 -p 2888:2888 -p 3888:3888 debezium/zookeeper:1.6
+   ```
+   ```sh
    docker run -dit --name kafka -p 9092:9092 --link zookeeper:zookeeper debezium/kafka:1.6
+   ```
+   ```sh
    docker run -dit --name connect -p 8083:8083 \
                                   -e GROUP_ID=1 \
                                   -e CONFIG_STORAGE_TOPIC=my-connect-configs \
@@ -137,7 +141,11 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
 10. Confirm Debezium Connect is running and enable MySql connector.
     ```sh
     curl -H "Accept:application/json" localhost:8083/
+    ```
+    ```sh
     curl -X POST -H "Accept:application/json" -H "Content-Type:application/json" localhost:8083/connectors/ -d '{ "name": "inventory-connector", "config": { "connector.class": "io.debezium.connector.mysql.MySqlConnector", "tasks.max": "1", "database.hostname": "mysql", "database.port": "3306", "database.user": "root", "database.password": "password", "database.server.id": "184054", "database.server.name": "dbserver1", "database.include.list": "bus_demo", "database.history.kafka.bootstrap.servers": "kafka:9092", "database.history.kafka.topic": "dbhistory.bus_demo" } }'
+    ```
+    ```sh
     curl -H "Accept:application/json" localhost:8083/connectors/inventory-connector/status
     ```
 11. Start Spark master container.
@@ -166,7 +174,7 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
    ```
 14. Start SBT container. 
    ```sh
-   docker run -dit --name sbt -p 8080 -v ${PWD}/spark-streaming:/root hseeberger/scala-sbt:8u222_1.3.
+   docker run -dit --name sbt -p 8080 -v ${PWD}/spark-streaming:/root hseeberger/scala-sbt:8u222_1.3.5_2.13.1
    ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
@@ -176,25 +184,24 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
 
 Once you have completed all the steps above you are ready to start the pipeline with the 2 steps below.
 
-
-1. Start the NiFi Processors.
-2. Clean the build enviornment.
- ```sh
-   docker exec -it sbt sbt clean
-   ```
-3. Build the application
- ```sh
-   docker exec -it sbt sbt assembly
-   ```
-4. Copy to jar folder.
- ```sh
-   cp spark-streaming/target/scala-2.12/spark-streaming-with-debezium_2.12.8-0.1.jar jars/
-   ```
-2. Start the Spark job.
- ```sh
-   docker exec -it spark-master ./spark/bin/spark-submit --master local --name streaming-data-app --class project.streaming.StreamingJDBC /jars/spark-streaming-with-debezium_2.12.8-0.1.jar
- ```
-3. Data can now be visualized in Super Set
+1. Clean the build enviornment.
+```sh
+docker exec -it sbt sbt clean
+```
+2. Build the application
+```sh
+docker exec -it sbt sbt assembly
+```
+3. Copy to jar folder.
+```sh
+cp spark-streaming/target/scala-2.12/spark-streaming-with-debezium_2.12.8-0.1.jar jars/
+```
+4. Start the NiFi Processors.
+5. Start the Spark job.
+```sh
+docker exec -it spark-master ./spark/bin/spark-submit --master local --name streaming-data-app --class project.streaming.StreamingJDBC /jars/spark-streaming-with-debezium_2.12.8-0.1.jar
+```
+6. Data can now be visualized in Super Set
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
