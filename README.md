@@ -149,33 +149,33 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
     curl -H "Accept:application/json" localhost:8083/connectors/inventory-connector/status
     ```
 11. Start Spark master container.
-   ```sh
-   docker run -dit --name spark-master -p 8555:8080 -p 7077:7077 \
+    ```sh
+    docker run -dit --name spark-master -p 8555:8080 -p 7077:7077 \
                                        -v ${PWD}/jars:/jars \
                                        -v ${PWD}/data:/data \
                                        -e INIT_DEAMON_STEP=setup_spark \
                                        --link kafka:kafka \
                                        --link postgres:postgres \
                                        bde2020/spark-master:3.2.0-hadoop3.2
-   ```
+    ```
 12. Start Spark worker container.
-   ```sh
-   docker run -dit --name spark-worker -p 8081:8081 \
+    ```sh
+    docker run -dit --name spark-worker -p 8081:8081 \
                                        -v ${PWD}/jars:/jars \
                                        -v ${PWD}/data:/data \
                                        -e SPARK_MASTER=spark://spark-master:7077 \
                                        --link kafka:kafka \
                                        --link postgres:postgres \
                                        bde2020/spark-master:3.2.0-hadoop3.2
-   ```
+    ```
 13. Start the Superset container.
-   ```sh
-   docker run -dit --name superset -p 8088:8088 --link postgres:postgres apache/superset
-   ```
+    ```sh
+    docker run -dit --name superset -p 8088:8088 --link postgres:postgres apache/superset
+    ```
 14. Start SBT container. 
-   ```sh
-   docker run -dit --name sbt -p 8080 -v ${PWD}/spark-streaming:/root hseeberger/scala-sbt:8u222_1.3.5_2.13.1
-   ```
+    ```sh
+    docker run -dit --name sbt -p 8080 -v ${PWD}/spark-streaming:/root hseeberger/scala-sbt:8u222_1.3.5_2.13.1
+    ```
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
