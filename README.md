@@ -10,7 +10,7 @@
 <h3 align="center">Streaming Data Pipeline</h3>
 
   <p align="center">
-    A proof of concept streaming data pipeline that will utilize NiFi to get data from a REST API.  The data will then move from a MySQL database to a PostgreSQL utalizing Kafka to produce events.  The cosumer will be setup as a simple Spark job.
+    A proof of concept streaming data pipeline that will utilize NiFi to get data from a REST API.  The data will then move from a MySQL database to a PostgreSQL utilizing Kafka to produce events.  The cosumer will be setup as a simple Spark job.
     <br />
     <a href="https://youtu.be/IIwhjqQws1U">View Presentation Video </a>
   </p>
