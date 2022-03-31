@@ -234,7 +234,7 @@ Distributed under the Apache 2.0 License. See `LICENSE.txt` for more information
 <!-- CONTACT -->
 ## Contact
 
-Gurjot Singh - GurjotSingh@rogers.com
+Gurjot Singh - GurjotSinghJheeta@gmail.com
 
 Project Link: [https://github.com/codefo-O/on_prem_streaming_data_pipeline](https://github.com/codefo-O/on_prem_streaming_data_pipeline)
 
