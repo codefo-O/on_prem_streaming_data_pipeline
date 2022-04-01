@@ -12,7 +12,7 @@
   <p align="center">
     A proof of concept streaming data pipeline that will utilize NiFi to get data from a REST API.  The data will then move from a MySQL database to a PostgreSQL utilizing Kafka to produce events.  The cosumer will be setup as a simple Spark job.
     <br />
-    <a href="https://youtu.be/cae1UZSbFdc">View Presentation Video </a>
+    <a href="https://youtu.be/VsXmsjTIWm0">View Presentation Video </a>
   </p>
 </div>
 
@@ -238,4 +238,4 @@ Gurjot Singh - GurjotSinghJheeta@gmail.com
 
 Project Link: [https://github.com/codefo-O/on_prem_streaming_data_pipeline](https://github.com/codefo-O/on_prem_streaming_data_pipeline)
 
-View Presentation Video: [https://youtu.be/cae1UZSbFdc](https://youtu.be/cae1UZSbFdc)
+View Presentation Video: [https://youtu.be/VsXmsjTIWm0](https://youtu.be/VsXmsjTIWm0)
