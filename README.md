@@ -164,9 +164,10 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
                                        -v ${PWD}/jars:/jars \
                                        -v ${PWD}/data:/data \
                                        -e SPARK_MASTER=spark://spark-master:7077 \
+                                       --link spark-master:spark-master \
                                        --link kafka:kafka \
                                        --link postgres:postgres \
-                                       bde2020/spark-master:3.2.0-hadoop3.2
+                                       bde2020/spark-worker:3.2.0-hadoop3.2
     ```
 13. Start the Superset container.
     ```sh
