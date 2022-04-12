@@ -12,7 +12,6 @@
   <p align="center">
     A proof of concept streaming data pipeline that will utilize NiFi to get data from a REST API.  The data will then move from a MySQL database to a PostgreSQL utilizing Kafka to produce events.  The cosumer will be setup as a simple Spark job.
     <br />
-    <a href="https://youtu.be/VsXmsjTIWm0">View Presentation Video </a>
   </p>
 </div>
 
@@ -57,7 +56,6 @@ Step 4. User can access data from events real time
 <p align="right">(<a href="#top">back to top</a>)</p>
 
 ### Built With
-* [Bash](https://www.gnu.org/software/bash/)
 * [Debezium](https://debezium.io/)
 * [Docker](https://www.docker.com/)
 * [Kafka](https://kafka.apache.org/)
@@ -67,6 +65,7 @@ Step 4. User can access data from events real time
 * [Scala](https://www.scala-lang.org/)
 * [Spark](https://spark.apache.org/)
 * [Superset](https://superset.apache.org/)
+* [Shell]
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
@@ -116,7 +115,7 @@ To deploy the streaming_data_pipeline solution please follow the steps below.
    ```sh
    docker run -dit --name nifi -p 8080:8080 -p 8443:8443 --link mysql:mysql  codefoo/nifi-custom
    ```
-8. Import/Configure the NiFi template can be done through the UI (See Demo Video) or by running the script.      
+8. Import/Configure the NiFi template by running the script.  Once imported you will need to add the Password for the DB and start connnector.
    ```sh
    ./scripts/nifi_upload_template.sh
    ```
