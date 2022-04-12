@@ -65,7 +65,6 @@ Step 4. User can access data from events real time
 * [Scala](https://www.scala-lang.org/)
 * [Spark](https://spark.apache.org/)
 * [Superset](https://superset.apache.org/)
-* [Shell]
 
 <p align="right">(<a href="#top">back to top</a>)</p>
 
